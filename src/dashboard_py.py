@@ -303,5 +303,4 @@ if model is not None:
     st.sidebar.write(f"Run ID: {run_id[:8]}...")
     st.sidebar.write("Model Type: RandomForest")
 
-st.sidebar.markdown("---")
-st.sidebar.info("Use `streamlit run src/dashboard.py` to launch the dashboard.")
+
