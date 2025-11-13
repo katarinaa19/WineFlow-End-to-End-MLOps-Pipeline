@@ -242,7 +242,7 @@ Edit this file to adjust hyperparameters before training.
 
 # How to Run Everything  
 
-(Optional) Rerun to update the model and ID
+Run to update the model and ID
 ```
 conda activate mlops_env
 cd C:\Users\wxiny\Desktop\mlop_final
@@ -258,11 +258,12 @@ cd C:\Users\wxiny\Desktop\mlop_final
 mlflow models serve -m runs:/<RUN_ID>/model -p 8000 --no-conda
 ```
 
-Open another terminal, then run the following commands to execute the entire pipeline:
+Open another terminal, then run the following commands to execute the inference/dashboard pipeline using latest RUN_ID:
 
 ```
 conda activate mlops_env
 cd C:\Users\wxiny\Desktop\mlop_final
 
-python runall.py
+python src/inference.py
+streamlit run src/dashboard_py.py
 ```
