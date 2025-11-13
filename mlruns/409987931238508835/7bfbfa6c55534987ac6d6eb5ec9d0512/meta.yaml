@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/wxiny/Desktop/mlop_final/mlruns/409987931238508835/7bfbfa6c55534987ac6d6eb5ec9d0512/artifacts
+end_time: 1763008799077
+entry_point_name: ''
+experiment_id: '409987931238508835'
+lifecycle_stage: active
+run_id: 7bfbfa6c55534987ac6d6eb5ec9d0512
+run_name: AutoML_MultiAlgo
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1763008756988
+status: 3
+tags: []
+user_id: wxiny

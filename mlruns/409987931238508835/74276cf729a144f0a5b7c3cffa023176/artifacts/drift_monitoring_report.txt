@@ -1,0 +1,29 @@
+drift monitoring report
+
+run id: 74276cf729a144f0a5b7c3cffa023176
+
+original test metrics:
+  accuracy: 0.8156
+  f1_score: 0.8218
+  precision: 0.8500
+  recall: 0.7953
+
+drift test metrics:
+  accuracy: 0.7969
+  f1_score: 0.8024
+  precision: 0.8354
+  recall: 0.7719
+
+metric changes:
+  accuracy: -0.0188
+  f1_score: -0.0193
+  precision: -0.0146
+  recall: -0.0234
+
+top feature changes:
+         feature  original_mean  drift_mean  mean_change_%  original_std  drift_std  std_change_%  abs_mean_change
+   fixed acidity       8.245625    8.214676      -0.375339      1.675000   1.795583      7.199013         0.375339
+volatile acidity       0.535516    0.536831       0.245705      0.180577   0.188585      4.434628         0.245705
+      ph_alcohol      34.324723   34.324723       0.000000      4.187459   4.187459      0.000000         0.000000
+ alcohol_squared     108.550650  108.550650       0.000000     22.423864  22.423864      0.000000         0.000000
+   total_acidity       8.781141    8.781141       0.000000      1.640065   1.640065      0.000000         0.000000

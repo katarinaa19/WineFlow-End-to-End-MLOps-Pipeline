@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/wxiny/Desktop/mlop_final/mlruns/409987931238508835/a3e359587b1a45ffa5ef90ace42e76b8/artifacts
+end_time: 1763006048435
+entry_point_name: ''
+experiment_id: '409987931238508835'
+lifecycle_stage: active
+run_id: a3e359587b1a45ffa5ef90ace42e76b8
+run_name: AutoML_TPOT
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1763005980068
+status: 3
+tags: []
+user_id: wxiny

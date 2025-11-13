@@ -1,0 +1,15 @@
+creation_timestamp: 1763008793612
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1763008793612
+model_id: m-a6da90b7f9ce4c938ae01d367851ac6a
+name: wine_quality_automl_classifier
+run_id: 7bfbfa6c55534987ac6d6eb5ec9d0512
+run_link: null
+source: models:/m-a6da90b7f9ce4c938ae01d367851ac6a
+status: READY
+status_message: null
+storage_location: file:///C:/Users/wxiny/Desktop/mlop_final/mlruns/409987931238508835/models/m-a6da90b7f9ce4c938ae01d367851ac6a/artifacts
+user_id: null
+version: 7

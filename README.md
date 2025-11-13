@@ -10,8 +10,8 @@ This project implements a complete MLOps pipeline for wine quality classificatio
 
 ```
 mlop_final/
-├── data/                      # Data directory
-├── src/                       # Source code
+├── data/                     
+├── src/                     
 │   ├── preprocess.py
 │   ├── train_model.py
 │   ├── evaluate_model.py
@@ -21,11 +21,11 @@ mlop_final/
 │   └── utils.py
 ├── config/
 │   └── params.yaml
-├── outputs/                   # Generated outputs
-├── mlruns/                    # MLflow tracking
+├── outputs/                  
+├── mlruns/                  
 ├── requirements.txt
 ├── run_all.py
-└── PROJECT_OVERVIEW.md        # 
+└── PROJECT_OVERVIEW.md        
 ```
 
 ---

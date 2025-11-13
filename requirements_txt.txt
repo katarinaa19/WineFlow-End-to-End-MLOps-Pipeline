@@ -1,24 +1,24 @@
-# MLflow and Model Training
+# MLflow and model training
 mlflow==2.9.2
 scikit-learn==1.3.2
 
-# Data Processing
+# Data processing
 pandas==2.1.4
 numpy==1.26.2
 
-# Configuration Files
+# Configuration file
 pyyaml==6.0.1
 
-# HTTP Requests (for model inference)
+# HTTP requests (for model inference)
 requests==2.31.0
 
-# Dashboard and Visualization
+# Dashboard and visualization
 streamlit==1.29.0
 plotly==5.18.0
 matplotlib==3.8.2
 seaborn==0.13.0
 scipy==1.11.4
 
-# Optional: Jupyter Notebook Support
+# Optional: Jupyter Notebook support
 # jupyter==1.0.0
 # notebook==7.0.6

@@ -1,0 +1,6 @@
+algorithm,base_cv_score,tuned
+RandomForest,0.8085432694464866,True
+GradientBoosting,0.8062449797614192,True
+ExtraTrees,0.7974006566255629,False
+AdaBoost,0.770736450112918,False
+LogisticRegression,0.7490588790105108,False
