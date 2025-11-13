@@ -262,5 +262,12 @@ st.sidebar.write(f"Features: {len(train_df.columns) - 1}")
 if model is not None:
     st.sidebar.markdown("---")
     st.sidebar.subheader("🤖 Model Info")
+<<<<<<< HEAD
     st.sidebar.write(f"Run ID: {run_id}")
     st.sidebar.write("Model Type: GradientBoostingClassifier")
+=======
+    st.sidebar.write(f"Run ID: {run_id[:8]}...")
+    st.sidebar.write("Model Type: RandomForest")
+
+
+>>>>>>> 4739b51509afa9d7c62a68bfba5213bd2fdfa7af
