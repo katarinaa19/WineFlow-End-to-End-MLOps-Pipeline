@@ -1,6 +1,6 @@
 """
 Interactive Dashboard
-Functions: Model monitoring, data drift detection, EDA analysis
+Functions: Model monitoring, data drift detection, EDA analysis, manual inference
 Built using Streamlit
 """
 import streamlit as st
@@ -10,15 +10,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import mlflow
 import mlflow.sklearn
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix
 import os
-import sys
-from utils_py import load_data, calc_metrics
+from utils_py import load_data, calc_metrics  
 import plotly.express as px
-import plotly.graph_objects as go
 from scipy import stats
 
-# Page configuration
+# -----------------------------------------------------------
+# PAGE CONFIG
+# -----------------------------------------------------------
 st.set_page_config(
     page_title="Wine Quality ML Dashboard",
     page_icon="🍷",
@@ -26,7 +26,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS
+# -----------------------------------------------------------
+# CUSTOM CSS
+# -----------------------------------------------------------
 st.markdown("""
     <style>
     .main-header {
@@ -35,24 +37,6 @@ st.markdown("""
         text-align: center;
         margin-bottom: 2rem;
     }
-    .metric-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #8B0000;
-    }
-    .warning-box {
-        background-color: #fff3cd;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #ffc107;
-    }
-    .success-box {
-        background-color: #d4edda;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #28a745;
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -60,14 +44,19 @@ st.markdown("""
 st.markdown('<h1 class="main-header">🍷 Wine Quality ML Dashboard</h1>', unsafe_allow_html=True)
 st.markdown("---")
 
-# Sidebar
+# -----------------------------------------------------------
+# SIDEBAR NAVIGATION
+# -----------------------------------------------------------
 st.sidebar.title("🎛️ Control Panel")
+
 page = st.sidebar.selectbox(
     "Select a page",
-    ["📊 EDA", "🤖 Model Monitoring", "⚠️ Data Drift Detection", "📈 Feature Analysis"]
+    ["📊 EDA", "🤖 Model Monitoring", "⚠️ Data Drift Detection", "📈 Feature Analysis", "🧪 Manual Inference"]
 )
 
-# Check data
+# -----------------------------------------------------------
+# CHECK DATA
+# -----------------------------------------------------------
 @st.cache_data
 def check_data_exists():
     files = {
@@ -76,232 +65,202 @@ def check_data_exists():
         'test_drift': 'data/test_changed.csv',
         'original': 'data/winequality-red.csv'
     }
-    
-    exists = {key: os.path.exists(path) for key, path in files.items()}
+    exists = {k: os.path.exists(v) for k, v in files.items()}
     return exists, files
 
 data_exists, data_files = check_data_exists()
 
-# Missing data
 if not all(data_exists.values()):
-    st.warning("⚠️ Some required data files are missing. Please run the preprocessing script first.")
-    missing_files = [path for key, path in data_files.items() if not data_exists[key]]
-    st.code(f"Missing files: {', '.join(missing_files)}")
-    st.info("Run: `python src/preprocess.py`")
+    st.warning("⚠️ Some required data files are missing. Please run preprocessing.")
+    missing = [f for k, f in data_files.items() if not data_exists[k]]
+    st.code("Missing files:\n" + "\n".join(missing))
     st.stop()
 
-# Load all data
+# -----------------------------------------------------------
+# LOAD ALL DATA
+# -----------------------------------------------------------
 @st.cache_data
 def load_all_data():
     X_train, y_train = load_data('data/train.csv', target_col='quality_binary')
     X_test, y_test = load_data('data/test.csv', target_col='quality_binary')
-    X_test_drift, y_test_drift = load_data('data/test_changed.csv', target_col='quality_binary')
-    
+    X_drift, y_drift = load_data('data/test_changed.csv', target_col='quality_binary')
+
     train_df = pd.concat([X_train, y_train], axis=1)
     test_df = pd.concat([X_test, y_test], axis=1)
-    test_drift_df = pd.concat([X_test_drift, y_test_drift], axis=1)
-    
-    if os.path.exists('data/winequality-red.csv'):
-        original_df = pd.read_csv('data/winequality-red.csv', sep=';')
-    else:
-        original_df = None
-    
-    return train_df, test_df, test_drift_df, original_df
+    drift_df = pd.concat([X_drift, y_drift], axis=1)
 
-train_df, test_df, test_drift_df, original_df = load_all_data()
+    original = pd.read_csv('data/winequality-red.csv', sep=';')
+    original['quality_binary'] = (original['quality'] >= 6).astype(int)
 
-# Load model
+    return train_df, test_df, drift_df, original
+
+train_df, test_df, drift_df, original_df = load_all_data()
+
+# -----------------------------------------------------------
+# LOAD MODEL
+# -----------------------------------------------------------
 @st.cache_resource
 def load_model():
     try:
-        if os.path.exists('outputs/latest_run_id.txt'):
-            with open('outputs/latest_run_id.txt', 'r') as f:
-                run_id = f.read().strip()
-            model_uri = f"runs:/{run_id}/model"
-            model = mlflow.sklearn.load_model(model_uri)
-            return model, run_id
-        return None, None
+        with open('outputs/latest_run_id.txt', 'r') as f:
+            run_id = f.read().strip()
+        model_uri = f"runs:/{run_id}/model"
+        model = mlflow.sklearn.load_model(model_uri)
+        return model, run_id
     except Exception as e:
         st.error(f"Model loading failed: {e}")
         return None, None
 
 model, run_id = load_model()
 
-# ---------------------------------------------------------------------
+# ===========================================================
 # PAGE 1 — EDA
-# ---------------------------------------------------------------------
+# ===========================================================
 if page == "📊 EDA":
     st.header("📊 Exploratory Data Analysis (EDA)")
     
-    dataset_option = st.selectbox("Select dataset", ["Train", "Test", "Original"])
-    
-    if dataset_option == "Train":
-        df = train_df
-    elif dataset_option == "Test":
-        df = test_df
-    else:
-        if original_df is not None:
-            df = original_df.copy()
-            df['quality_binary'] = (df['quality'] >= 6).astype(int)
-        else:
-            st.error("Original dataset is missing.")
-            st.stop()
+    option = st.selectbox("Dataset", ["Train", "Test", "Original"])
 
-    # Overview
-    st.subheader("📋 Data Overview")
-    col1, col2, col3, col4 = st.columns(4)
+    df = train_df if option == "Train" else test_df if option == "Test" else original_df
+
+    st.subheader("📋 Overview")
+    col1, col2, col3 = st.columns(3)
     with col1: st.metric("Rows", df.shape[0])
     with col2: st.metric("Features", df.shape[1] - 1)
-    with col3: st.metric("High Quality", (df['quality_binary'] == 1).sum())
-    with col4: st.metric("Low Quality", (df['quality_binary'] == 0).sum())
+    with col3: st.metric("High Quality", int(df['quality_binary'].sum()))
 
-    # Preview
-    st.subheader("👀 Head")
-    st.dataframe(df.head(10), use_container_width=True)
+    st.subheader("👀 Preview")
+    st.dataframe(df.head(10))
 
-    # Summary
-    st.subheader("📊 Statistical Summary")
-    st.dataframe(df.describe(), use_container_width=True)
+    st.subheader("📊 Statistics")
+    st.dataframe(df.describe())
 
-    # Target distribution
     st.subheader("🎯 Target Distribution")
-    fig = px.pie(values=df['quality_binary'].value_counts().values,
-                 names=['0', '1'],
-                 title='Quality Distribution')
+    fig = px.pie(df, names='quality_binary', title="Quality Distribution")
     st.plotly_chart(fig)
 
-    # Feature distribution
     st.subheader("📈 Feature Distribution")
-    feature_cols = [c for c in df.columns if c not in ['quality', 'quality_binary']]
-    selected = st.selectbox("Select feature", feature_cols)
-
-    fig = px_hist = px.histogram(df, x=selected, color='quality_binary')
-    st.plotly_chart(fig)
-
-    # Correlation
-    st.subheader("🔗 Correlation Matrix")
-    corr_matrix = df[feature_cols].corr()
-    fig = px.imshow(corr_matrix, text_auto='.2f', aspect="auto")
+    feature = st.selectbox("Feature", [c for c in df.columns if c not in ['quality', 'quality_binary']])
+    fig = px.histogram(df, x=feature, color="quality_binary")
     st.plotly_chart(fig)
 
 
-# ---------------------------------------------------------------------
+# ===========================================================
 # PAGE 2 — MODEL MONITORING
-# ---------------------------------------------------------------------
+# ===========================================================
 elif page == "🤖 Model Monitoring":
     st.header("🤖 Model Performance Monitoring")
 
     if model is None:
-        st.error("Model not loaded. Run training script first.")
+        st.error("Model not loaded.")
         st.stop()
 
-    st.success(f"Model Loaded (Run ID: {run_id})")
+    dataset = st.selectbox("Dataset", ["Train", "Test", "Drift Test"])
 
-    # choose dataset
-    eval_dataset = st.selectbox("Select dataset", ["Train", "Test", "Drift Test"])
+    df = train_df if dataset == "Train" else test_df if dataset == "Test" else drift_df
+    X_eval = df.drop("quality_binary", axis=1)
+    y_eval = df["quality_binary"]
 
-    if eval_dataset == "Train":
-        X_eval, y_eval = train_df.drop('quality_binary', axis=1), train_df['quality_binary']
-    elif eval_dataset == "Test":
-        X_eval, y_eval = test_df.drop('quality_binary', axis=1), test_df['quality_binary']
-    else:
-        X_eval, y_eval = test_drift_df.drop('quality_binary', axis=1), test_drift_df['quality_binary']
-
-    # Predictions
     y_pred = model.predict(X_eval)
-    y_pred_proba = model.predict_proba(X_eval)
 
-    # Metrics
     metrics = calc_metrics(y_eval, y_pred)
 
-    col1, col2, col3, col4 = st.columns(4)
-    with col1: st.metric("Accuracy", f"{metrics['accuracy']:.4f}")
-    with col2: st.metric("F1 Score", f"{metrics['f1_score']:.4f}")
-    with col3: st.metric("Precision", f"{metrics['precision']:.4f}")
-    with col4: st.metric("Recall", f"{metrics['recall']:.4f}")
+    st.subheader("📈 Metrics")
+    for k, v in metrics.items():
+        st.metric(k.title(), f"{v:.4f}")
 
-    # Confusion Matrix
-    st.subheader("📈 Confusion Matrix")
+    st.subheader("🧩 Confusion Matrix")
     cm = confusion_matrix(y_eval, y_pred)
     fig = px.imshow(cm, text_auto=True)
     st.plotly_chart(fig)
 
 
-# ---------------------------------------------------------------------
+# ===========================================================
 # PAGE 3 — DATA DRIFT
-# ---------------------------------------------------------------------
+# ===========================================================
 elif page == "⚠️ Data Drift Detection":
     st.header("⚠️ Data Drift Detection")
 
     X_orig = test_df.drop('quality_binary', axis=1)
-    y_orig = test_df['quality_binary']
+    X_drift = drift_df.drop('quality_binary', axis=1)
 
-    X_drift = test_drift_df.drop('quality_binary', axis=1)
-    y_drift = test_drift_df['quality_binary']
+    drift_table = []
 
-    y_pred_orig = model.predict(X_orig)
-    y_pred_drift = model.predict(X_drift)
-
-    metrics_orig = calc_metrics(y_orig, y_pred_orig)
-    metrics_drift = calc_metrics(y_drift, y_pred_drift)
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.write("### Original Test Set")
-        for m, v in metrics_orig.items():
-            st.metric(m.title(), f"{v:.4f}")
-    with col2:
-        st.write("### Drift Test Set")
-        for m, v in metrics_drift.items():
-            delta = v - metrics_orig[m]
-            st.metric(m.title(), f"{v:.4f}", delta=f"{delta:+.4f}")
-
-    # Drift summary table
-    st.subheader("📋 Feature Drift Summary")
-    feature_cols = list(X_orig.columns)
-
-    drift_summary = []
-    for col in feature_cols:
+    for col in X_orig.columns:
         ks, p = stats.ks_2samp(X_orig[col], X_drift[col])
-        drift_summary.append({
-            'Feature': col,
-            'KS Statistic': ks,
-            'p-value': p,
-            'Drift?': "Yes" if p < 0.05 else "No"
+        drift_table.append({
+            "Feature": col,
+            "KS Statistic": ks,
+            "p-value": p,
+            "Drift?": "Yes" if p < 0.05 else "No"
         })
-    st.dataframe(pd.DataFrame(drift_summary))
 
+    st.dataframe(pd.DataFrame(drift_table))
 
-# ---------------------------------------------------------------------
+# ===========================================================
 # PAGE 4 — FEATURE ANALYSIS
-# ---------------------------------------------------------------------
+# ===========================================================
 elif page == "📈 Feature Analysis":
-    st.header("📈 Feature Analysis")
+    st.header("📈 Feature Behavior by Quality Class")
 
-    df_analysis = st.selectbox("Dataset", ["Train", "Test"])
-    df_analysis = train_df if df_analysis == "Train" else test_df
+    df = st.selectbox("Dataset", ["Train", "Test"])
+    df = train_df if df == "Train" else test_df
 
-    feature_cols = [c for c in df_analysis.columns if c not in ['quality', 'quality_binary']]
+    feature = st.selectbox("Select feature", [c for c in df.columns if c not in ['quality', 'quality_binary']])
 
-    selected = st.selectbox("Select feature", feature_cols)
-
-    fig = px.violin(df_analysis, x="quality_binary", y=selected, box=True, points="all")
+    fig = px.violin(df, x='quality_binary', y=feature, box=True)
     st.plotly_chart(fig)
 
-# ---------------------------------------------------------------------
-# Sidebar dataset and model info
-# ---------------------------------------------------------------------
+
+# ===========================================================
+# PAGE 5 — MANUAL INFERENCE
+# ===========================================================
+elif page == "🧪 Manual Inference":
+    st.header("🧪 Manual Inference – Predict Wine Quality")
+
+    if model is None:
+        st.error("Model not loaded.")
+        st.stop()
+
+    feature_cols = [
+        'fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar',
+        'chlorides', 'free sulfur dioxide', 'total sulfur dioxide',
+        'density', 'pH', 'sulphates', 'alcohol'
+    ]
+
+    st.subheader("Input Values")
+    user_inputs = {}
+    cols = st.columns(3)
+
+    for i, feat in enumerate(feature_cols):
+        with cols[i % 3]:
+            user_inputs[feat] = st.number_input(
+                feat,
+                value=float(train_df[feat].median()),
+                format="%.4f"
+            )
+
+    input_df = pd.DataFrame([user_inputs])
+    st.write(input_df)
+
+    if st.button("Predict"):
+        pred = model.predict(input_df)[0]
+        prob = model.predict_proba(input_df)[0][1]
+
+        st.success(f"Predicted Quality: **{pred}**")
+        st.metric("Probability of High Quality", f"{prob:.4f}")
+
+# -----------------------------------------------------------
+# SIDEBAR INFORMATION (BOTTOM)
+# -----------------------------------------------------------
 st.sidebar.markdown("---")
-st.sidebar.subheader("📊 Dataset Info")
+st.sidebar.subheader("📊 Dataset Summary")
 st.sidebar.write(f"Train samples: {train_df.shape[0]}")
-st.sidebar.write(f"Test samples:  {test_df.shape[0]}")
-st.sidebar.write(f"Feature count: {len(train_df.columns) - 1}")
+st.sidebar.write(f"Test samples: {test_df.shape[0]}")
+st.sidebar.write(f"Features: {len(train_df.columns) - 1}")
 
 if model is not None:
     st.sidebar.markdown("---")
     st.sidebar.subheader("🤖 Model Info")
-    st.sidebar.write(f"Run ID: {run_id[:8]}...")
-    st.sidebar.write("Model Type: RandomForest")
-
-st.sidebar.markdown("---")
-st.sidebar.info("Use `streamlit run src/dashboard.py` to launch the dashboard.")
+    st.sidebar.write(f"Run ID: {run_id}")
+    st.sidebar.write("Model Type: GradientBoostingClassifier")

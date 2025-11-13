@@ -1,0 +1,10 @@
+artifact_location: file:///C:/Users/wxiny/Desktop/mlop_final/mlruns/409987931238508835/models/m-4512457df7ab4407b7936d189d0ef28f/artifacts
+creation_timestamp: 1762995990778
+experiment_id: '409987931238508835'
+last_updated_timestamp: 1762995994494
+model_id: m-4512457df7ab4407b7936d189d0ef28f
+model_type: null
+name: model
+source_run_id: a420890471194c329d29ae3c9512060b
+status: 2
+status_message: null

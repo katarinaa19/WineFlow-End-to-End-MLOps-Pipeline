@@ -1,0 +1,29 @@
+drift monitoring report
+
+run id: ba9647cd28c942738aa26985c8030348
+
+original test metrics:
+  accuracy: 0.7969
+  f1_score: 0.8024
+  precision: 0.8354
+  recall: 0.7719
+
+drift test metrics:
+  accuracy: 0.7875
+  f1_score: 0.7939
+  precision: 0.8239
+  recall: 0.7661
+
+metric changes:
+  accuracy: -0.0094
+  f1_score: -0.0085
+  precision: -0.0115
+  recall: -0.0058
+
+top feature changes:
+         feature  original_mean  drift_mean  mean_change_%  original_std  drift_std  std_change_%  abs_mean_change
+volatile acidity       0.535516    0.537462       0.363550      0.180577   0.187860      4.033424         0.363550
+   fixed acidity       8.245625    8.237038      -0.104134      1.675000   1.727929      3.159967         0.104134
+     citric acid       0.263469    0.263469       0.000000      0.198813   0.198813      0.000000         0.000000
+  residual sugar       2.534687    2.534687       0.000000      1.519961   1.519961      0.000000         0.000000
+       chlorides       0.090428    0.090428       0.000000      0.050595   0.050595      0.000000         0.000000

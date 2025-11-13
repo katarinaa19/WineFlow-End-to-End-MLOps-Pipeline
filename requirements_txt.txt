@@ -1,24 +1,24 @@
-# MLflow 和模型训练
+# MLflow and Model Training
 mlflow==2.9.2
 scikit-learn==1.3.2
 
-# 数据处理
+# Data Processing
 pandas==2.1.4
 numpy==1.26.2
 
-# 配置文件
+# Configuration Files
 pyyaml==6.0.1
 
-# HTTP 请求（用于模型推理）
+# HTTP Requests (for model inference)
 requests==2.31.0
 
-# Dashboard 和可视化
+# Dashboard and Visualization
 streamlit==1.29.0
 plotly==5.18.0
 matplotlib==3.8.2
 seaborn==0.13.0
 scipy==1.11.4
 
-# 可选：Jupyter Notebook 支持
+# Optional: Jupyter Notebook Support
 # jupyter==1.0.0
 # notebook==7.0.6
