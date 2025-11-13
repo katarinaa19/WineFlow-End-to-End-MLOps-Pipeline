@@ -241,6 +241,14 @@ Edit this file to adjust hyperparameters before training.
 ---
 
 # How to Run Everything  
+
+(Optional) Rerun to update the model and ID
+```
+conda activate mlops_env
+cd C:\Users\wxiny\Desktop\mlop_final
+python runall.py
+```
+
 Open one terminal and run the following commands to start the model service:
 ```
 conda activate mlops_env
@@ -256,5 +264,5 @@ Open another terminal, then run the following commands to execute the entire pip
 conda activate mlops_env
 cd C:\Users\wxiny\Desktop\mlop_final
 
-python run_all.py
+python runall.py
 ```
