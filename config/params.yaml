@@ -1,0 +1,29 @@
+# parameters for the wine quality classification project
+# model parameters
+model:
+  n_estimators: 300
+  learning_rate: 0.05
+  max_depth: 3
+  subsample: 0.9
+  min_samples_split: 2
+  min_samples_leaf: 1
+  random_state: 42
+
+# 训练参数
+training:
+  test_size: 0.2             
+  experiment_name: "wine_quality_classification"   
+  run_name: "gbc_baseline"              
+
+# 数据参数
+data:
+  target_threshold: 6        # 质量阈值 (>= 6 为高质量)
+  input_file: "data/winequality-red.csv"
+  train_file: "data/train.csv"
+  test_file: "data/test.csv"
+  test_drift_file: "data/test_changed.csv"
+
+# 监控参数
+monitoring:
+  drift_noise_scale: 0.3     # 数据漂移噪声比例
+  performance_threshold: 0.05  # 性能下降警告阈值

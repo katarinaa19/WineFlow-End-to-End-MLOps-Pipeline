@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/wxiny/Desktop/mlop_final/mlruns/409987931238508835/6f68b602024845f69603aacfc1d00990/artifacts
+end_time: 1762989699006
+entry_point_name: ''
+experiment_id: '409987931238508835'
+lifecycle_stage: active
+run_id: 6f68b602024845f69603aacfc1d00990
+run_name: RandomForest_Baseline
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762989237537
+status: 3
+tags: []
+user_id: wxiny

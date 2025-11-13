@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/wxiny/Desktop/mlop_final/mlruns/409987931238508835/e909d373786f472abd8338c7bf048a3f/artifacts
+end_time: 1762993604776
+entry_point_name: ''
+experiment_id: '409987931238508835'
+lifecycle_stage: active
+run_id: e909d373786f472abd8338c7bf048a3f
+run_name: gbc_baseline
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762993592140
+status: 3
+tags: []
+user_id: wxiny

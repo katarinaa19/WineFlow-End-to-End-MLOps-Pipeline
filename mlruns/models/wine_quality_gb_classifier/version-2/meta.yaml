@@ -1,0 +1,15 @@
+creation_timestamp: 1762993596071
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1762993596071
+model_id: m-bc42a5c00cf94940a2e1c7e4a3708fff
+name: wine_quality_gb_classifier
+run_id: e909d373786f472abd8338c7bf048a3f
+run_link: null
+source: models:/m-bc42a5c00cf94940a2e1c7e4a3708fff
+status: READY
+status_message: null
+storage_location: file:///C:/Users/wxiny/Desktop/mlop_final/mlruns/409987931238508835/models/m-bc42a5c00cf94940a2e1c7e4a3708fff/artifacts
+user_id: null
+version: 2

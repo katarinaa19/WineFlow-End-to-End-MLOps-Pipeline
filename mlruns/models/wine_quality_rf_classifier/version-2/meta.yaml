@@ -1,0 +1,15 @@
+creation_timestamp: 1762992433275
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1762992433275
+model_id: m-1f8e875a7d3148639875f230b59bb4c7
+name: wine_quality_rf_classifier
+run_id: ecec6256b88a4f3e853f4dd2e8291bcd
+run_link: null
+source: models:/m-1f8e875a7d3148639875f230b59bb4c7
+status: READY
+status_message: null
+storage_location: file:///C:/Users/wxiny/Desktop/mlop_final/mlruns/409987931238508835/models/m-1f8e875a7d3148639875f230b59bb4c7/artifacts
+user_id: null
+version: 2
